@@ -1,0 +1,11 @@
+results/
+dev/
+*.fastq
+*.fastq.gz
+*.bam
+*.bai
+*.vcf
+*.vcf.gz
+*.g.vcf
+*.g.vcf.gz
+.DS_Store
