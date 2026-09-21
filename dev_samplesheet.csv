@@ -1,0 +1,2 @@
+sample_id,condition,replicate,library_type,r1_fastq,r2_fastq
+NA12878,unaffected,1,paired,dev/NA12878_R1.fastq.gz,dev/NA12878_R2.fastq.gz
