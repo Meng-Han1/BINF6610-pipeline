@@ -28,7 +28,6 @@ stage_validate() {
 
     log "Validating inputs"
 
-    # The samplesheet must exist and must not be empty.
     if [[ ! -s "$SHEET" ]]; then
         log "ERROR: samplesheet missing or empty: $SHEET"
         exit 65
@@ -43,7 +42,6 @@ stage_validate() {
 
     # Validate every sample in the samplesheet.
     while IFS=, read -r id condition replicate library_type r1 r2; do
-
         r1_lines=0
         r2_lines=0
         r1_reads=0
@@ -73,7 +71,7 @@ stage_validate() {
             errors=$(( errors + 1 ))
         fi
 
-        # If a paired-end sample has an R2 path, validate it.
+        # Validate R2 for paired-end samples.
         if [[ "$library_type" == "paired" && -n "$r2" ]]; then
             if [[ ! -s "$r2" ]]; then
                 log "ERROR: $id: R2 missing or empty: $r2"
@@ -93,7 +91,7 @@ stage_validate() {
             fi
         fi
 
-        # Paired-end samples must contain the same number of reads in R1 and R2.
+        # Paired-end samples must have matching read counts.
         if [[ "$library_type" == "paired" &&
               "$r1_reads" -gt 0 &&
               "$r2_reads" -gt 0 &&
@@ -104,7 +102,6 @@ stage_validate() {
 
     done < <(tail -n +2 "$SHEET")
 
-    # Report failure only after every sample has been checked.
     if (( errors > 0 )); then
         log "Validation failed: $errors problem(s)"
         exit 65
@@ -113,12 +110,63 @@ stage_validate() {
     log "Validation passed"
 }
 
+stage_qc_raw() {
+    local id condition replicate library_type r1 r2
+    local qc_dir="${OUTDIR}/qc_raw"
+    local r1_base r2_base
+
+    log "Running raw-read QC"
+
+    mkdir -p "$qc_dir"
+
+    while IFS=, read -r id condition replicate library_type r1 r2; do
+        log "FastQC: $id R1"
+
+        fastqc \
+            -q -o "$qc_dir" \
+            "$r1"
+
+        r1_base=$(basename "$r1" .fastq.gz)
+
+        if [[ ! -s "${qc_dir}/${r1_base}_fastqc.html" ||
+              ! -s "${qc_dir}/${r1_base}_fastqc.zip" ]]; then
+            die "$id: FastQC R1 output missing or empty"
+        fi
+
+        if [[ "$library_type" == "paired" ]]; then
+            log "FastQC: $id R2"
+
+            fastqc \
+                -q -o "$qc_dir" \
+                "$r2"
+
+            r2_base=$(basename "$r2" .fastq.gz)
+
+            if [[ ! -s "${qc_dir}/${r2_base}_fastqc.html" ||
+                  ! -s "${qc_dir}/${r2_base}_fastqc.zip" ]]; then
+                die "$id: FastQC R2 output missing or empty"
+            fi
+        fi
+
+    done < <(tail -n +2 "$SHEET")
+
+    log "Raw-read QC complete"
+}
+
 if [[ -z "$SHEET" || -z "$OUTDIR" ]]; then
     die "usage: $0 <samplesheet.csv> <outdir> [last-stage]"
 fi
 
+stage_validate
+
 if [[ "$LAST" == "validate" ]]; then
-    stage_validate
-else
-    die "only validate is implemented so far"
+    exit 0
 fi
+
+stage_qc_raw
+
+if [[ "$LAST" == "qc_raw" ]]; then
+    exit 0
+fi
+
+die "stages after qc_raw are not implemented yet"
