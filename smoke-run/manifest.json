@@ -1,0 +1,65 @@
+{
+  "pipeline": {
+    "name": "variant-call",
+    "version": "1.0.0",
+    "implementation": "bash",
+    "git_sha": "f79ae08",
+    "run_id": "2026-09-24T20:19:09Z-f79ae08",
+    "started_at": "2026-09-24T20:19:09Z",
+    "finished_at": "2026-09-24T20:19:09Z",
+    "exit_status": "success"
+  },
+  "platform": {
+    "kind": "laptop",
+    "region": "smoke_1mb"
+  },
+  "reference": {
+    "genome": "/Users/menghan/Desktop/BINF6610/smoke/smoke.fa"
+  },
+  "samples": [
+    {
+      "sample_id": "smoke_01",
+      "library_type": "paired",
+      "condition": "unaffected"
+    },
+    {
+      "sample_id": "smoke_02",
+      "library_type": "paired",
+      "condition": "affected"
+    },
+    {
+      "sample_id": "smoke_03",
+      "library_type": "single",
+      "condition": "affected"
+    }
+  ],
+  "outputs": [
+    {
+      "stage": "analyze",
+      "type": "cohort_vcf",
+      "path": "cohort.filtered.vcf.gz",
+      "checksum": "sha256:e58226ac59d95431626fa44993a50198842d08b2bd72b04f921f21d6927fc53a"
+    },
+    {
+      "stage": "analyze",
+      "type": "cohort_vcf_index",
+      "path": "cohort.filtered.vcf.gz.tbi",
+      "checksum": "sha256:69bb44cd67d9eb175eba3e7d2ddbad5b2d6cd1a2f3f632375c3b909940948534"
+    },
+    {
+      "stage": "qc_report",
+      "type": "multiqc",
+      "path": "multiqc_report.html",
+      "checksum": "sha256:005567bf38d6fff1e7e5a6f5fa96e50f5c309e01f6e1585a9e7dba7b5c14052b"
+    }
+  ],
+  "metrics": [
+    {
+      "sample_id": null,
+      "metric": "n_variants",
+      "value": 2965,
+      "unit": "count",
+      "stage": "analyze"
+    }
+  ]
+}
