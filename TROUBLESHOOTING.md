@@ -23,3 +23,7 @@ unchanged. To verify the validator independently, I truncated my 273 KB
 development FASTQ to 120 bytes. `gzip -t` returned 1, and `stage_validate`
 reported the affected sample and exited 65. This confirmed that the pipeline
 correctly rejects a genuinely truncated gzip stream.
+
+After the corrected acceptance harness was released, I downloaded the updated
+test suite and confirmed that the same validator passed the truncated-gzip test
+without any change to the pipeline logic.
