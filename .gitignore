@@ -9,3 +9,6 @@ dev/
 *.g.vcf
 *.g.vcf.gz
 .DS_Store
+
+# Slurm runtime logs
+logs/

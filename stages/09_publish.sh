@@ -39,7 +39,7 @@ stage_publish() {
     git_sha=$(git -C "$script_dir" rev-parse --short HEAD 2>/dev/null || echo unknown)
 
     if [[ "$git_sha" != "unknown" ]] &&
-       [[ -n "$(git -C "$script_dir" status --porcelain 2>/dev/null)" ]]; then
+       [[ -n "$(git -C "$script_dir" status --porcelain --untracked-files=no 2>/dev/null)" ]]; then
         git_sha="${git_sha}-dirty"
     fi
 
