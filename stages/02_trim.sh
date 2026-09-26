@@ -14,11 +14,27 @@ stage_trim() {
 
     while IFS=, read -r id condition replicate library_type r1 r2; do
         out_r1="${trim_dir}/${id}_R1.trim.fastq.gz"
+        out_r2="${trim_dir}/${id}_R2.trim.fastq.gz"
         html="${trim_dir}/${id}.fastp.html"
         json="${trim_dir}/${id}.fastp.json"
 
         if [[ "$library_type" == "paired" ]]; then
-            out_r2="${trim_dir}/${id}_R2.trim.fastq.gz"
+            if [[ -s "$out_r1" && -s "$out_r2" &&
+                  -s "$html" && -s "$json" ]] &&
+               gzip -t "$out_r1" 2>/dev/null &&
+               gzip -t "$out_r2" 2>/dev/null; then
+                log "fastp: $id already complete; skipping"
+                continue
+            fi
+        elif [[ "$library_type" == "single" ]]; then
+            if [[ -s "$out_r1" && -s "$html" && -s "$json" ]] &&
+               gzip -t "$out_r1" 2>/dev/null; then
+                log "fastp: $id already complete; skipping"
+                continue
+            fi
+        fi
+
+        if [[ "$library_type" == "paired" ]]; then
 
             log "fastp: $id paired-end"
 
