@@ -43,7 +43,7 @@ stage_postprocess() {
 
         log "Indexing BAM: $id"
 
-        samtools index "$output_bam"
+        samtools index -@ "$THREADS" "$output_bam"
 
         if [[ ! -s "$bai" ]]; then
             die "$id: BAM index missing or empty"

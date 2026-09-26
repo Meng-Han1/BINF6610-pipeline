@@ -30,21 +30,27 @@ stage_align() {
             log "BWA-MEM: $id paired-end"
 
             bwa mem \
+                -t "$THREADS" \
                 -R "$rg" \
                 "$REF" \
                 "$trim_r1" \
                 "$trim_r2" \
             | samtools sort \
+                -@ "$THREADS" \
+                -T "${TMPDIR}/${id}.sort" \
                 -o "$bam"
 
         elif [[ "$library_type" == "single" ]]; then
             log "BWA-MEM: $id single-end"
 
             bwa mem \
+                -t "$THREADS" \
                 -R "$rg" \
                 "$REF" \
                 "$trim_r1" \
             | samtools sort \
+                -@ "$THREADS" \
+                -T "${TMPDIR}/${id}.sort" \
                 -o "$bam"
 
         else

@@ -12,3 +12,6 @@ die() {
 }
 
 STAGES=(validate qc_raw trim align postprocess quantify merge analyze qc_report publish)
+
+THREADS=${THREADS:-1}
+TMPDIR=${TMPDIR:-/tmp}

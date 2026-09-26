@@ -28,7 +28,8 @@ stage_trim() {
                 -o "$out_r1" \
                 -O "$out_r2" \
                 --html "$html" \
-                --json "$json"
+                --json "$json" \
+                -w "$THREADS"
 
             if [[ ! -s "$out_r1" || ! -s "$out_r2" ||
                   ! -s "$html" || ! -s "$json" ]]; then
@@ -47,7 +48,8 @@ stage_trim() {
                 -i "$r1" \
                 -o "$out_r1" \
                 --html "$html" \
-                --json "$json"
+                --json "$json" \
+                -w "$THREADS"
 
             if [[ ! -s "$out_r1" ||
                   ! -s "$html" || ! -s "$json" ]]; then
