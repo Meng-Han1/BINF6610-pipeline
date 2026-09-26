@@ -7,6 +7,7 @@ stage_quantify() {
     local post_dir="${OUTDIR}/postprocess"
     local gvcf_dir="${OUTDIR}/gvcf"
     local bam gvcf tbi
+    local tmp_gvcf tmp_tbi
 
     log "Calling per-sample GVCFs"
 
@@ -25,6 +26,18 @@ stage_quantify() {
         gvcf="${gvcf_dir}/${id}.g.vcf.gz"
         tbi="${gvcf}.tbi"
 
+        tmp_gvcf="${gvcf_dir}/${id}.tmp.g.vcf.gz"
+        tmp_tbi="${tmp_gvcf}.tbi"
+
+        if [[ -s "$gvcf" && -s "$tbi" ]] &&
+           bcftools view -h "$gvcf" >/dev/null 2>&1 &&
+           [[ "$(bcftools query -l "$gvcf" 2>/dev/null)" == "$id" ]]; then
+            log "HaplotypeCaller: $id already complete; skipping"
+            continue
+        fi
+
+        rm -f "$gvcf" "$tbi" "$tmp_gvcf" "$tmp_tbi"
+
         log "HaplotypeCaller: $id"
 
         if [[ ! -s "$bam" ]]; then
@@ -38,24 +51,31 @@ stage_quantify() {
         gatk HaplotypeCaller \
             -R "$REF" \
             -I "$bam" \
-            -O "$gvcf" \
+            -O "$tmp_gvcf" \
             -ERC GVCF \
             -L "$REGION"
 
-        if [[ ! -s "$gvcf" ]]; then
-            die "$id: GVCF missing or empty"
+        if [[ ! -s "$tmp_gvcf" ]]; then
+            die "$id: temporary GVCF missing or empty"
         fi
 
-        if [[ ! -s "$tbi" ]]; then
-            die "$id: GVCF index missing or empty"
+        if [[ ! -s "$tmp_tbi" ]]; then
+            die "$id: temporary GVCF index missing or empty"
         fi
 
-        if ! bcftools view -h "$gvcf" >/dev/null; then
-            die "$id: GVCF is not readable"
+        if ! bcftools view -h "$tmp_gvcf" >/dev/null; then
+            die "$id: temporary GVCF is not readable"
         fi
 
-        if [[ "$(bcftools query -l "$gvcf")" != "$id" ]]; then
-            die "$id: GVCF sample name does not match sample_id"
+        if [[ "$(bcftools query -l "$tmp_gvcf")" != "$id" ]]; then
+            die "$id: temporary GVCF sample name does not match sample_id"
+        fi
+
+        mv "$tmp_gvcf" "$gvcf"
+        mv "$tmp_tbi" "$tbi"
+
+        if [[ ! -s "$gvcf" || ! -s "$tbi" ]]; then
+            die "$id: final GVCF or index missing after publish"
         fi
     done < <(tail -n +2 "$SHEET")
 
