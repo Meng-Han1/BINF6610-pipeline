@@ -1,0 +1,90 @@
+{
+  "pipeline": {
+    "name": "variant-call",
+    "version": "1.0.0",
+    "implementation": "bash",
+    "git_sha": "1d90afb",
+    "run_id": "2026-09-26T20:17:06Z-1d90afb",
+    "started_at": "2026-09-26T20:17:06Z",
+    "finished_at": "2026-09-26T20:17:06Z",
+    "exit_status": "success"
+  },
+  "platform": {
+    "kind": "laptop",
+    "region": "chr20:1-10000000"
+  },
+  "reference": {
+    "genome": "/courses/BINF6610.202710/data/refs/grch38-1000g/GRCh38_full_analysis_set_plus_decoy_hla.fa"
+  },
+  "samples": [
+    {
+      "sample_id": "NA12878",
+      "library_type": "paired",
+      "condition": "affected"
+    },
+    {
+      "sample_id": "NA12891",
+      "library_type": "paired",
+      "condition": "affected"
+    },
+    {
+      "sample_id": "NA12892",
+      "library_type": "single",
+      "condition": "unaffected"
+    },
+    {
+      "sample_id": "NA07357",
+      "library_type": "paired",
+      "condition": "unaffected"
+    },
+    {
+      "sample_id": "NA12003",
+      "library_type": "single",
+      "condition": "affected"
+    },
+    {
+      "sample_id": "NA10851",
+      "library_type": "paired",
+      "condition": "unaffected"
+    },
+    {
+      "sample_id": "NA12813",
+      "library_type": "paired",
+      "condition": "affected"
+    },
+    {
+      "sample_id": "NA12873",
+      "library_type": "paired",
+      "condition": "unaffected"
+    }
+  ],
+  "outputs": [
+    {
+      "stage": "analyze",
+      "type": "cohort_vcf",
+      "path": "cohort.filtered.vcf.gz",
+      "checksum": "sha256:5d4534729a009f394ba11bc029d750de13edcf5fa2d8151eae8bfcd9e105c253"
+    },
+    {
+      "stage": "analyze",
+      "type": "cohort_vcf_index",
+      "path": "cohort.filtered.vcf.gz.tbi",
+      "checksum": "sha256:2628e9f9a4e99eca8e7a84eac55ef489f4ba2b78d243cb56669672ac350b0372"
+    },
+    {
+      "stage": "qc_report",
+      "type": "multiqc",
+      "path": "multiqc_report.html",
+      "checksum": "sha256:5bc2780ca6b1681da49cf849c8877e57cc555ba4afe40c76f399b3c582d245d8"
+    }
+  ],
+  "metrics": [
+    {
+      "sample_id": null,
+      "metric": "n_variants",
+      "value": 36853,
+      "unit": "count",
+      "stage": "analyze"
+    }
+  ]
+}
