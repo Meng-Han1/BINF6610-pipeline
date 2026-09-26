@@ -11,7 +11,7 @@ PIPELINE_DIR="${SLURM_SUBMIT_DIR}"
 source "${PIPELINE_DIR}/slurm/conf/slurm.env"
 
 SHEET="${PIPELINE_DIR}/samplesheet.csv"
-OUTDIR="/scratch/${USER}/BINF6610-assignment2"
+OUTDIR="${OUTDIR:-/scratch/${USER}/BINF6610-assignment2}"
 
 module load "${MINICONDA_MODULE}"
 source activate "${CONDA_ENV}"
