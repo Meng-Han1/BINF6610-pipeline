@@ -14,8 +14,6 @@ SHEET="${PIPELINE_DIR}/samplesheet.csv"
 OUTDIR="${OUTDIR:-/scratch/${USER}/BINF6610-assignment2}"
 
 module load "${MINICONDA_MODULE}"
-source activate "${CONDA_ENV}"
-
 export THREADS="${SLURM_CPUS_PER_TASK}"
 
 export TMPDIR="/tmp/${SLURM_JOB_ID}"
@@ -39,11 +37,16 @@ echo "sample=${SAMPLE}" >&2
 echo "threads=${THREADS}" >&2
 echo "tmpdir=${TMPDIR}" >&2
 
-REF="${REF}" \
-REGION="${REGION}" \
-THREADS="${THREADS}" \
-TMPDIR="${TMPDIR}" \
-bash "${PIPELINE_DIR}/run_sample.sh" \
+apptainer exec --cleanenv \
+    --env THREADS="${THREADS}" \
+    --env TMPDIR="${TMPDIR}" \
+    --env SLURM_JOB_ID="${SLURM_JOB_ID}" \
+    --env SLURM_CPUS_PER_TASK="${SLURM_CPUS_PER_TASK}" \
+    --env REF="${REF}" \
+    --env REGION="${REGION}" \
+    --bind /courses/BINF6610.202710,"/scratch/${USER}" \
+    "${SIF}" \
+    bash "${PIPELINE_DIR}/run_sample.sh" \
     "${SHEET}" \
     "${OUTDIR}" \
     "${SAMPLE}" \
