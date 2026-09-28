@@ -59,6 +59,7 @@ stage_publish() {
     PIPELINE_FINISHED_AT="$finished_at" \
     PIPELINE_REF="$REF" \
     PIPELINE_REGION="$REGION" \
+    PIPELINE_CONTAINER="${APPTAINER_CONTAINER:-}" \
     PIPELINE_SHEET="$SHEET" \
     PIPELINE_RESULTS_DIR="$results_dir" \
     PIPELINE_VCF_SHA="$vcf_sha" \
@@ -95,6 +96,7 @@ manifest = {
     "platform": {
         "kind": "laptop",
         "region": os.environ["PIPELINE_REGION"],
+        "container": os.environ["PIPELINE_CONTAINER"],
     },
     "reference": {
         "genome": os.environ["PIPELINE_REF"],
