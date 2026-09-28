@@ -13,7 +13,6 @@ source "${PIPELINE_DIR}/slurm/conf/slurm.env"
 SHEET="${PIPELINE_DIR}/samplesheet.csv"
 OUTDIR="${OUTDIR:-/scratch/${USER}/BINF6610-assignment3}"
 
-module load "${MINICONDA_MODULE}"
 export THREADS="${SLURM_CPUS_PER_TASK}"
 
 export TMPDIR="/tmp/${SLURM_JOB_ID}"
