@@ -95,3 +95,99 @@ sample name was `NA12878`.
 **Diagnosis / result:** The cancelled alignment was not mistaken for a completed
 result. Completed upstream work was reused, while the interrupted stage and its
 downstream stages were recomputed successfully.
+
+## Week 3 deliberate failure: unpinned rebuild
+
+**Failure introduced:** I deliberately built an image from an unpinned recipe:
+
+`FROM ubuntu`
+
+`RUN apt-get update && apt-get install -y curl`
+
+The first build was performed on September 27. I saved its installed-package
+list with `dpkg -l`. More than 24 hours later, I rebuilt the same recipe with:
+
+`docker build --pull --no-cache --platform linux/amd64 -t w3-unpinned:day2 .`
+
+I again saved the complete `dpkg -l` output and compared the two package lists
+with `diff -u`.
+
+**Evidence:** Both package lists contained 122 lines, and the comparison
+returned `diff exit=0`, so there were no package differences between these two
+particular builds. The second build nevertheless re-ran the unpinned
+`apt-get update && apt-get install -y curl` step because `--no-cache` was used,
+and `--pull` checked the current `ubuntu:latest` base. Both builds resolved the
+base to
+`ubuntu:latest@sha256:da6fc2be547864451aa253836dd926da33623312df4a9a243e35dc877c378a78`.
+
+**Diagnosis / result:** The absence of a difference in this 24-hour interval
+does not make the recipe reproducible. `ubuntu` is a mutable tag and `curl`
+has no pinned package version, so a future rebuild can resolve to a different
+base image or package version without any Dockerfile change. The production
+image therefore pins its base-image tag and all required software versions.
+
+## Week 3 deliberate failure: missing Apptainer bind
+
+**Failure introduced:** On Explorer I verified that
+`/scratch/han.meng1/BINF6610-assignment3/results/cohort.filtered.vcf.gz`
+existed on the host, then deliberately ran the container without binding the
+scratch path:
+
+`apptainer exec --cleanenv "$SIF" bcftools view -h "$BROKEN_TARGET"`
+
+**Evidence:** The command failed with:
+
+`Failed to open file "/scratch/han.meng1/BINF6610-assignment3/results/cohort.filtered.vcf.gz" : No such file or directory`
+
+and returned `missing-bind exit=255`.
+
+I repeated the command with:
+
+`--bind /scratch/han.meng1`
+
+and it returned `with-bind exit=0`.
+
+**Diagnosis / result:** A path that exists on the Explorer host is not
+necessarily visible inside the container. The production Slurm jobs therefore
+explicitly bind the required `/courses/BINF6610.202710` and scratch paths.
+
+## Week 3 deliberate failure: incorrect GATK thread count
+
+**Failure introduced:** I allocated four CPUs with Slurm but deliberately ran
+a small HaplotypeCaller test with one PairHMM thread using
+`--native-pair-hmm-threads 1`.
+
+**Evidence:** GATK reported:
+
+`Available threads: 4`
+
+`Requested threads: 1`
+
+I then repeated the test with the correct four-thread setting. GATK reported:
+
+`Available threads: 4`
+
+`Requested threads: 4`
+
+**Diagnosis / result:** Allocating CPUs with Slurm does not by itself make an
+application use them. The thread count must reach the container and the
+application. The production jobs therefore pass `THREADS` and
+`SLURM_CPUS_PER_TASK` explicitly through `apptainer exec --env`, and the
+pipeline uses the requested thread count for HaplotypeCaller.
+
+## Week 3 deliberate failure: wrong container architecture
+
+**Failure introduced:** I deliberately built and pushed an ARM64 image, pulled
+it into an Apptainer SIF on an Explorer compute node, and attempted to execute
+it. The compute node reported `uname -m` as `x86_64`.
+
+**Evidence:** Apptainer refused to execute the ARM64 SIF with:
+
+`FATAL: While checking container encryption: could not open image /scratch/han.meng1/w3-arch-breakage/wrong-arm64.sif: the image's architecture (arm64) could not run on the host's (amd64)`
+
+The command returned `wrong-arch exit=255`.
+
+**Diagnosis / result:** An image can be built and transferred successfully yet
+still be unusable on the target cluster if its CPU architecture is wrong. The
+production image was therefore built explicitly with
+`--platform linux/amd64` for Explorer's x86_64/amd64 compute nodes.
