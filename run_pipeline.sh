@@ -2,11 +2,12 @@
 
 set -euo pipefail
 
-SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+HERE=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+export RUN_STARTED=$(date -u +%Y-%m-%dT%H:%M:%SZ)
 
-source "${SCRIPT_DIR}/lib/common.sh"
+source "${HERE}/lib/common.sh"
 
-for stage_file in "${SCRIPT_DIR}"/stages/*.sh; do
+for stage_file in "${HERE}"/stages/*.sh; do
     source "$stage_file"
 done
 
