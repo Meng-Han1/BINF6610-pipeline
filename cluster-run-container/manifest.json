@@ -2,90 +2,45 @@
   "pipeline": {
     "name": "variant-call",
     "version": "1.0.0",
-    "implementation": "bash",
-    "git_sha": "db6efe8",
-    "run_id": "2026-09-28T03:00:21Z-db6efe8",
-    "started_at": "2026-09-28T03:00:21Z",
-    "finished_at": "2026-09-28T03:00:21Z",
+    "implementation": "singularity",
+    "git_sha": "2caa2bea347bad46d9196805994bc9f2cd549e4c",
+    "run_id": "2026-10-02T17:20:12Z-2caa2be",
+    "started_at": "2026-10-02T17:20:12Z",
+    "finished_at": "2026-10-02T17:54:58Z",
     "exit_status": "success"
   },
   "platform": {
-    "kind": "laptop",
+    "kind": "singularity-hpc",
     "region": "chr20:1-10000000",
+    "host": "c0612",
+    "slurm_job_id": "10761856",
+    "slurm_cpus": "4",
     "container": "/scratch/han.meng1/containers/variant-call.sif"
   },
-  "reference": {
-    "genome": "/courses/BINF6610.202710/data/refs/grch38-1000g/GRCh38_full_analysis_set_plus_decoy_hla.fa"
-  },
+  "reference": {"genome": "/courses/BINF6610.202710/data/refs/grch38-1000g/GRCh38_full_analysis_set_plus_decoy_hla.fa"},
   "samples": [
-    {
-      "sample_id": "NA12878",
-      "library_type": "paired",
-      "condition": "affected"
-    },
-    {
-      "sample_id": "NA12891",
-      "library_type": "paired",
-      "condition": "affected"
-    },
-    {
-      "sample_id": "NA12892",
-      "library_type": "single",
-      "condition": "unaffected"
-    },
-    {
-      "sample_id": "NA07357",
-      "library_type": "paired",
-      "condition": "unaffected"
-    },
-    {
-      "sample_id": "NA12003",
-      "library_type": "single",
-      "condition": "affected"
-    },
-    {
-      "sample_id": "NA10851",
-      "library_type": "paired",
-      "condition": "unaffected"
-    },
-    {
-      "sample_id": "NA12813",
-      "library_type": "paired",
-      "condition": "affected"
-    },
-    {
-      "sample_id": "NA12873",
-      "library_type": "paired",
-      "condition": "unaffected"
-    }
+    {"sample_id": "NA12878", "library_type": "paired", "condition": "affected"},
+    {"sample_id": "NA12891", "library_type": "paired", "condition": "affected"},
+    {"sample_id": "NA12892", "library_type": "single", "condition": "unaffected"},
+    {"sample_id": "NA07357", "library_type": "paired", "condition": "unaffected"},
+    {"sample_id": "NA12003", "library_type": "single", "condition": "affected"},
+    {"sample_id": "NA10851", "library_type": "paired", "condition": "unaffected"},
+    {"sample_id": "NA12813", "library_type": "paired", "condition": "affected"},
+    {"sample_id": "NA12873", "library_type": "paired", "condition": "unaffected"}
   ],
   "outputs": [
-    {
-      "stage": "analyze",
-      "type": "cohort_vcf",
-      "path": "cohort.filtered.vcf.gz",
-      "checksum": "sha256:de3df87d59dea8303e729f8722bda2e08ac53a1c0751bb89730057126bf346ac"
-    },
-    {
-      "stage": "analyze",
-      "type": "cohort_vcf_index",
-      "path": "cohort.filtered.vcf.gz.tbi",
-      "checksum": "sha256:2628e9f9a4e99eca8e7a84eac55ef489f4ba2b78d243cb56669672ac350b0372"
-    },
-    {
-      "stage": "qc_report",
-      "type": "multiqc",
-      "path": "multiqc_report.html",
-      "checksum": "sha256:1b9672490a5dbe4559dd64fe7165fc23c3b6e879411b190e0dd8b57953c88c6f"
-    }
+    {"stage": "analyze", "type": "vcf", "path": "cohort.filtered.vcf.gz", "checksum": "sha256:f82074d50bd77c1f2e7418c20308b5eccf8e9d68d7ca50d1af1e3f0f77f1b789"},
+    {"stage": "analyze", "type": "vcf_index", "path": "cohort.filtered.vcf.gz.tbi", "checksum": "sha256:812f8ceaef858889869b725eb3c8da793afa863f37d93201e55add27e9568e00"},
+    {"stage": "qc_report", "type": "multiqc", "path": "multiqc_report.html", "checksum": "sha256:dbb5bc1a115fd8226a64abdc3793afe9fcd66a5fa0c4c8f9933310b43ad02404"}
   ],
-  "metrics": [
-    {
-      "sample_id": null,
-      "metric": "n_variants",
-      "value": 36853,
-      "unit": "count",
-      "stage": "analyze"
-    }
-  ]
+  "metrics": [],
+  "tools": {
+    "bwa": "0.7.19-r1273",
+    "samtools": "1.24",
+    "bcftools": "1.24",
+    "gatk": "4.6.2.0",
+    "fastqc": "0.12.1",
+    "fastp": "1.3.7",
+    "multiqc": "1.35"
+  }
 }
