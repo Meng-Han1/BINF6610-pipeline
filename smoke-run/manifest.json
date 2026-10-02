@@ -3,63 +3,39 @@
     "name": "variant-call",
     "version": "1.0.0",
     "implementation": "bash",
-    "git_sha": "f79ae08",
-    "run_id": "2026-09-24T20:19:09Z-f79ae08",
-    "started_at": "2026-09-24T20:19:09Z",
-    "finished_at": "2026-09-24T20:19:09Z",
+    "git_sha": "8d2b48d16a9c4e8cd830a2841604c8a40d186fd8",
+    "run_id": "2026-10-02T18:33:09Z-8d2b48d",
+    "started_at": "2026-10-02T18:33:09Z",
+    "finished_at": "2026-10-02T18:34:51Z",
     "exit_status": "success"
   },
   "platform": {
     "kind": "laptop",
-    "region": "smoke_1mb"
+    "region": "smoke_1mb",
+    "host": "MengdeMacBook-Pro.local",
+    "slurm_job_id": "none",
+    "slurm_cpus": "none",
+    "container": "none"
   },
-  "reference": {
-    "genome": "/Users/menghan/Desktop/BINF6610/smoke/smoke.fa"
-  },
+  "reference": {"genome": "/Users/menghan/Desktop/BINF6610/smoke/smoke.fa"},
   "samples": [
-    {
-      "sample_id": "smoke_01",
-      "library_type": "paired",
-      "condition": "unaffected"
-    },
-    {
-      "sample_id": "smoke_02",
-      "library_type": "paired",
-      "condition": "affected"
-    },
-    {
-      "sample_id": "smoke_03",
-      "library_type": "single",
-      "condition": "affected"
-    }
+    {"sample_id": "smoke_01", "library_type": "paired", "condition": "unaffected"},
+    {"sample_id": "smoke_02", "library_type": "paired", "condition": "affected"},
+    {"sample_id": "smoke_03", "library_type": "single", "condition": "affected"}
   ],
   "outputs": [
-    {
-      "stage": "analyze",
-      "type": "cohort_vcf",
-      "path": "cohort.filtered.vcf.gz",
-      "checksum": "sha256:e58226ac59d95431626fa44993a50198842d08b2bd72b04f921f21d6927fc53a"
-    },
-    {
-      "stage": "analyze",
-      "type": "cohort_vcf_index",
-      "path": "cohort.filtered.vcf.gz.tbi",
-      "checksum": "sha256:69bb44cd67d9eb175eba3e7d2ddbad5b2d6cd1a2f3f632375c3b909940948534"
-    },
-    {
-      "stage": "qc_report",
-      "type": "multiqc",
-      "path": "multiqc_report.html",
-      "checksum": "sha256:005567bf38d6fff1e7e5a6f5fa96e50f5c309e01f6e1585a9e7dba7b5c14052b"
-    }
+    {"stage": "analyze", "type": "vcf", "path": "cohort.filtered.vcf.gz", "checksum": "sha256:90648cabd58fd5769de7d7b7694eb60b93b45b079eb5a0c222337ed989f91190"},
+    {"stage": "analyze", "type": "vcf_index", "path": "cohort.filtered.vcf.gz.tbi", "checksum": "sha256:d9225bd67ffd658c6c6ff65a749be7699a2c3ff5abdbbadfbecc23dbf9a5d96a"},
+    {"stage": "qc_report", "type": "multiqc", "path": "multiqc_report.html", "checksum": "sha256:8a06dfcc6bc045bf25945c4ac5fa798333733643e216d44d88852e0affa05029"}
   ],
-  "metrics": [
-    {
-      "sample_id": null,
-      "metric": "n_variants",
-      "value": 2965,
-      "unit": "count",
-      "stage": "analyze"
-    }
-  ]
+  "metrics": [],
+  "tools": {
+    "bwa": "0.7.19-r1273",
+    "samtools": "1.22",
+    "bcftools": "1.24",
+    "gatk": "4.6.2.0",
+    "fastqc": "0.12.1",
+    "fastp": "1.3.7",
+    "multiqc": "1.35"
+  }
 }
