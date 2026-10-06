@@ -38,7 +38,7 @@ while read -r duplicate; do
     errors=$(( errors + 1 ))
 done < <(awk -F, 'NR > 1 { print $1 }' "$SHEET" | sort | uniq -d)
 
-while IFS=, read -r id condition replicate library_type r1 r2; do
+while IFS=$'\t' read -r id library_type r1 r2; do
     r1=$(basename "$r1")
     r2=$(basename "$r2")
 
@@ -101,7 +101,40 @@ while IFS=, read -r id condition replicate library_type r1 r2; do
         errors=$(( errors + 1 ))
     fi
 
-done < <(tail -n +2 "$SHEET")
+done < <(
+    awk -F, '
+        NR == 1 {
+            for (i = 1; i <= NF; i++) {
+                gsub(/\r/, "", $i)
+                col[$i] = i
+            }
+
+            required[1] = "sample_id"
+            required[2] = "library_type"
+            required[3] = "r1_fastq"
+            required[4] = "r2_fastq"
+
+            for (i = 1; i <= 4; i++) {
+                if (!(required[i] in col)) {
+                    printf "ERROR: samplesheet has no %s column\\n", required[i] > "/dev/stderr"
+                    exit 65
+                }
+            }
+            next
+        }
+
+        /^[[:space:]]*$/ { next }
+
+        {
+            gsub(/\r/, "")
+            printf "%s\\t%s\\t%s\\t%s\\n",
+                $col["sample_id"],
+                $col["library_type"],
+                $col["r1_fastq"],
+                $col["r2_fastq"]
+        }
+    ' "$SHEET"
+)
 
 if (( errors > 0 )); then
     printf 'Validation failed: %d problem(s)\n' "$errors" >&2
