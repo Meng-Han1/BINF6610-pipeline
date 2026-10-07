@@ -1,0 +1,46 @@
+{
+  "pipeline": {
+    "name": "variant-call",
+    "version": "1.0.0",
+    "implementation": "nextflow",
+    "revision": "none",
+    "git_sha": "none",
+    "run_id": "deadly_jennings",
+    "started_at": "2026-10-06T14:10:34.874917-04:00",
+    "launch_dir": "/Users/menghan/Desktop/BINF6610/BINF6610-pipeline",
+    "finished_at": "2026-10-06T18:11:58Z",
+    "exit_status": "success"
+  },
+  "params": {
+    "samplesheet": "/Users/menghan/Desktop/BINF6610/smoke/samplesheet.csv",
+    "ref": "/Users/menghan/Desktop/BINF6610/smoke/smoke.fa",
+    "region": "smoke_1mb",
+    "outdir": "results",
+    "platform": "docker-local"
+  },
+  "platform": {
+    "kind": "docker-local",
+    "executor": "local",
+    "engine": "nextflow 26.04.6",
+    "containers": {
+      "tools": "community.wave.seqera.io/library/coreutils_gawk_gzip:7c58ccc2f9ca6bcc",
+      "fastqc": "quay.io/biocontainers/fastqc:0.12.1--hdfd78af_0",
+      "fastp": "community.wave.seqera.io/library/fastp:1.3.7--075357a9d5c82494",
+      "bwa": "community.wave.seqera.io/library/bwa_samtools:22527ddb3cc80fb3",
+      "gatk": "community.wave.seqera.io/library/gatk4_samtools_bcftools:1adede7d418fb46b",
+      "multiqc": "quay.io/biocontainers/multiqc:1.35--pyhdfd78af_2"
+    }
+  },
+  "samples": [
+    {"sample_id": "smoke_01", "library_type": "paired", "condition": "unaffected"},
+    {"sample_id": "smoke_02", "library_type": "paired", "condition": "affected"},
+    {"sample_id": "smoke_03", "library_type": "single", "condition": "affected"}
+  ],
+  "outputs": [
+    {"path": "cohort.filtered.vcf.gz", "checksum": "sha256:11e541e2aea1ba26ee81802ef5b04e89eac4adee12152844ae14fb727574c6a7"},
+    {"path": "cohort.filtered.vcf.gz.tbi", "checksum": "sha256:1f470b50a1ff9920a7ca9075727e50f907d53320c362333e3bb5c69f88063ea2"},
+    {"path": "multiqc_report.html", "checksum": "sha256:e8d26d28b324f9c0c91bf558a2489a7a4ad983c50be4e220ce756d5c94d31f61"},
+    {"path": "samples.tsv", "checksum": "sha256:d534edf8132cce4c541af0eea6cc345b17613e1b4a7a5286742aa8d16395257c"},
+    {"path": "variants.tsv", "checksum": "sha256:69beab824707c5fb6faf44edadf3acdad84ea137f8a48d7fa4a13201f703bea0"}
+  ]
+}

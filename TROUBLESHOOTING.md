@@ -191,3 +191,72 @@ The command returned `wrong-arch exit=255`.
 still be unusable on the target cluster if its CPU architecture is wrong. The
 production image was therefore built explicitly with
 `--platform linux/amd64` for Explorer's x86_64/amd64 compute nodes.
+## Week 4 deliberate failure: interrupt and resume
+
+**Failure introduced:** I interrupted the Docker smoke workflow while tasks
+were still running. The interrupted Nextflow run was `elated_mclean`. I then
+reran the same workflow with `-resume` as run `deadly_jennings`.
+
+**Evidence:** At interruption, 13 tasks had already completed: one VALIDATE,
+three FASTQC, three FASTP, three BWA_MEM, and three MARKDUPLICATES tasks.
+The resumed run reported `Cached: 13` and `Succeeded: 7`. The cached tasks
+were not recomputed, while the unfinished HAPLOTYPECALLER, JOINT_GENOTYPE,
+FILTER, MULTIQC, and PUBLISH work completed successfully.
+
+**Diagnosis / result:** Nextflow's task cache records successfully completed
+work. With `-resume`, tasks whose inputs, code, and execution context still
+match can be reused instead of being run again. Interrupted or incomplete
+tasks are not treated as completed results.
+
+## Week 4 deliberate failure: reference as a queue channel
+
+**Failure introduced:** I temporarily replaced the reusable reference value
+used by BWA_MEM with `channel.fromPath(params.ref)`, making the reference a
+queue channel.
+
+**Evidence:** The Docker run `romantic_noyce` finished with status `OK`, but
+only one alignment task ran: `BWA_MEM (smoke_01)`. FASTQC and FASTP each ran
+for all three samples, while BWA_MEM, MARKDUPLICATES, and HAPLOTYPECALLER
+each ran for only one sample.
+
+**Diagnosis / result:** A queue channel emits its item for consumption rather
+than supplying the same value repeatedly. The single reference item could
+therefore pair with only one sample. This was especially dangerous because
+the workflow itself completed successfully despite silently losing two
+samples. I restored the reference created with `file(params.ref)`, which is
+a reusable value channel and can be supplied to every sample.
+
+## Week 4 deliberate failure: unescaped shell command substitution
+
+**Failure introduced:** In the FILTER process I deliberately removed the
+backslash from a Bash command substitution, changing an intended `\$(...)`
+inside the Nextflow `script:` block to `$(...)`.
+
+**Evidence:** FILTER terminated with exit status 2. Inspection of the failed
+task's `.command.sh` showed that Nextflow had generated a malformed shell
+command rather than preserving the intended Bash command substitution.
+`.command.err` reported `syntax error near unexpected token ')'`. I also
+inspected `.command.run` to distinguish the Nextflow/container wrapper from
+the generated task script.
+
+**Diagnosis / result:** A Nextflow triple-quoted script is interpreted before
+Bash executes the generated `.command.sh`. Dollar signs intended for Bash
+must therefore be escaped where required. Restoring `\$(...)` allowed Bash
+to perform the command substitution when the task ran, and FILTER completed
+successfully.
+
+## Week 4 deliberate failure: HaplotypeCaller time limit
+
+**Failure introduced:** On Explorer I temporarily changed the
+HAPLOTYPECALLER process time limit from `1h` to `2m`.
+
+**Evidence:** Nextflow head job `10882785` failed during HAPLOTYPECALLER.
+For `HAPLOTYPECALLER (NA12892)`, Nextflow reported exit status 140. The
+corresponding Slurm HaplotypeCaller jobs were submitted with a `00:02:00`
+time limit and failed before completing the 10 Mb chr20 interval.
+
+**Diagnosis / result:** Two minutes was insufficient for HaplotypeCaller on
+this dataset. I restored the process time limit to `1h` and reran the
+workflow with `-resume`. The successful upstream work was reused, and the
+final Explorer head job `10882981` completed with exit code `0:0`. The
+completed workflow produced all eight samples and 36,853 VCF records.

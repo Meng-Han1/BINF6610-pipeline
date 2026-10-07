@@ -1,0 +1,3 @@
+week3 6215f63ec2606336520face91909c7d50b67c5ec286d5f8330a19db187b78b42
+week4 6215f63ec2606336520face91909c7d50b67c5ec286d5f8330a19db187b78b42
+The Week 3 and Week 4 variant-record checksums are identical.
