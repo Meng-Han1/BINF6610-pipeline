@@ -19,3 +19,8 @@ work/
 .nextflow.log*
 results/
 nf-head-*.out
+
+# Week 5 Snakemake runtime
+.snakemake/
+logs/
+slurm/*.out

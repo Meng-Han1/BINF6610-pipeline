@@ -5,6 +5,11 @@ set -euo pipefail
 SHEET=${1:?usage: validate_samplesheet.sh <samplesheet> <reference_name>}
 REF_NAME=${2:?usage: validate_samplesheet.sh <samplesheet> <reference_name>}
 
+if [[ ! -e "$REF_NAME" ]]; then
+    staged_ref=$(basename "$REF_NAME")
+    [[ ! -e "$staged_ref" ]] || REF_NAME="$staged_ref"
+fi
+
 errors=0
 
 # The staged reference and its required indexes must all be present.
@@ -39,8 +44,15 @@ while read -r duplicate; do
 done < <(awk -F, 'NR > 1 { print $1 }' "$SHEET" | sort | uniq -d)
 
 while IFS=$'\t' read -r id library_type r1 r2; do
-    r1=$(basename "$r1")
-    r2=$(basename "$r2")
+    if [[ ! -e "$r1" ]]; then
+        staged_r1=$(basename "$r1")
+        [[ ! -e "$staged_r1" ]] || r1="$staged_r1"
+    fi
+
+    if [[ -n "$r2" && ! -e "$r2" ]]; then
+        staged_r2=$(basename "$r2")
+        [[ ! -e "$staged_r2" ]] || r2="$staged_r2"
+    fi
 
     r1_lines=0
     r2_lines=0

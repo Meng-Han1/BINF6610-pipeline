@@ -1,0 +1,40 @@
+{
+  "pipeline": {
+    "name": "variant-call",
+    "version": "1.0.0",
+    "implementation": "snakemake",
+    "revision": "none",
+    "git_sha": "none",
+    "run_id": "snakemake-20261016T105446",
+    "started_at": "2026-10-16T10:54:46.120037-04:00",
+    "launch_dir": "/Users/menghan/Desktop/BINF6610/BINF6610-pipeline",
+    "finished_at": "2026-10-16T14:56:35Z",
+    "exit_status": "success"
+  },
+  "params": {
+    "platform": "laptop",
+    "executor": "local",
+    "samplesheet": "/Users/menghan/Desktop/BINF6610/smoke/samplesheet.csv",
+    "ref": "/Users/menghan/Desktop/BINF6610/smoke/smoke.fa",
+    "region": "smoke_1mb",
+    "outdir": "results"
+  },
+  "platform": {
+    "kind": "laptop",
+    "executor": "local",
+    "engine": "snakemake 9.27.0",
+    "containers": {}
+  },
+  "samples": [
+    {"sample_id": "smoke_01", "library_type": "paired", "condition": "unaffected"},
+    {"sample_id": "smoke_02", "library_type": "paired", "condition": "affected"},
+    {"sample_id": "smoke_03", "library_type": "single", "condition": "affected"}
+  ],
+  "outputs": [
+    {"path": "cohort.filtered.vcf.gz", "checksum": "sha256:b1fb407ba5b674fa4e1eaced175838ec2ea2266154bc9a0cbb76ad97ab6c836a"},
+    {"path": "cohort.filtered.vcf.gz.tbi", "checksum": "sha256:18fd57f869dc84e018d0d58706e15419f633d454c5da42dc3f1528d137ccd7ad"},
+    {"path": "multiqc_report.html", "checksum": "sha256:f71404cb257811c9f4f2d01722cb2e83a69ffc0f34ec9e5227ed44e1ac6f49cf"},
+    {"path": "samples.tsv", "checksum": "sha256:d534edf8132cce4c541af0eea6cc345b17613e1b4a7a5286742aa8d16395257c"},
+    {"path": "variants.tsv", "checksum": "sha256:69beab824707c5fb6faf44edadf3acdad84ea137f8a48d7fa4a13201f703bea0"}
+  ]
+}
