@@ -1,0 +1,4 @@
+week4 6215f63ec2606336520face91909c7d50b67c5ec286d5f8330a19db187b78b42
+week5 650790b9bd458ac206bd20e4a4d7d45ea076c878899b40bb7fd8448371f49862
+
+The two runs contain the same 36,853 variant sites (CHROM, POS, REF, ALT) in the same order, and all genotype calls (GT) agree across eight samples. The full record checksums differ because a small number of QUAL, INFO, FILTER, and per-sample quality/depth fields differ. The exact upstream cause has not been established.

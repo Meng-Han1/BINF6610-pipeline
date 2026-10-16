@@ -224,15 +224,18 @@ rule joint_genotype:
     shell:
         r"""
         (
-            rm -rf work/cohort/genomicsdb
+            DB_PARENT=$(mktemp -d /tmp/variant-call-XXXXXX)
+            DB_DIR="$DB_PARENT/genomicsdb"
+            trap 'rm -rf "$DB_PARENT"' EXIT
+
             gatk GenomicsDBImport \
                 {params.variants} \
-                --genomicsdb-workspace-path work/cohort/genomicsdb \
+                --genomicsdb-workspace-path "$DB_DIR" \
                 -L '{config[region]}'
 
             gatk GenotypeGVCFs \
                 -R {input.ref} \
-                -V gendb://work/cohort/genomicsdb \
+                -V "gendb://$DB_DIR" \
                 -O {output.vcf} \
                 -L '{config[region]}'
         ) > {log} 2>&1

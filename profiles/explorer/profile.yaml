@@ -3,7 +3,7 @@ jobs: 30
 configfile: profiles/explorer/platform.yaml
 software-deployment-method: apptainer
 apptainer-prefix: /courses/BINF6610.202710/shared/snakemake-images
-apptainer-args: "--bind /courses,/scratch"
+apptainer-args: "--bind /courses,/scratch,/tmp"
 latency-wait: 60
 printshellcmds: true
 
@@ -30,7 +30,7 @@ set-resources:
     runtime: 60
   joint_genotype:
     mem_mb: 24000
-    runtime: 60
+    runtime: 120
   filter:
     mem_mb: 8000
   multiqc:

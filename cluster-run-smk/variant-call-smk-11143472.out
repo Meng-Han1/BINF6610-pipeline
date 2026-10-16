@@ -1,0 +1,154 @@
+Using profile profiles/explorer for setting default command line arguments.
+Config file config.yaml is extended by additional config specified via the command line.
+
+SNAKEMAKE
+=========
+  Date: 2026-10-16 15:52:19
+  Workflow ID: 2079f264-87f5-4c92-b6a7-d82de2a60e4e
+  Platform: Linux-5.14.0-362.13.1.el9_3.x86_64-x86_64-with-glibc2.34
+  Host: c3014
+  User: han.meng1
+  Snakemake version: 9.27.0
+  Python version: 3.12.14 (main, Sep  2 2026, 23:27:36) [GCC 15.3.0]
+  Command: /courses/BINF6610.202710/shared/env/binf6610-workflows/bin/snakemake --profile profiles/explorer --config samplesheet=/courses/BINF6610.202710/data/samplesheet-variant8.csv ref=/courses/BINF6610.202710/data/refs/grch38-1000g/GRCh38_full_analysis_set_plus_decoy_hla.fa region=chr20:1-10000000 outdir=results-smk
+  Snakefile: /home/han.meng1/BINF6610-pipeline/Snakefile
+  Base directory: /home/han.meng1/BINF6610-pipeline
+  Run directory: /home/han.meng1/BINF6610-pipeline
+  Working directory: /home/han.meng1/BINF6610-pipeline
+  Config file(s): [PosixPath('/home/han.meng1/BINF6610-pipeline/profiles/explorer/platform.yaml'), 'config.yaml']
+  Config MD5: 65e87681be929b0d4dc48ce3cc4721c8
+
+Building DAG of jobs...
+You are running snakemake in a SLURM job context. This is not recommended, as it may lead to unexpected behavior. If possible, please run Snakemake directly on the login node.
+SLURM run ID: a7bc7325-be36-456c-9bef-ace564a6a506
+MinJobAge 300s (>= 120s). 'squeue' should work reliably for status queries.
+Using shell: /usr/bin/bash
+Provided remote nodes: 30
+Job stats:
+job               count
+--------------  -------
+joint_genotype        1
+filter                1
+publish               1
+all                   1
+total                 4
+
+Select jobs to execute...
+Execute 1 jobs...
+
+[Fri Oct 16 15:52:22 2026]
+rule joint_genotype:
+    input: work/gvcf/NA12878.g.vcf.gz, work/gvcf/NA12891.g.vcf.gz, work/gvcf/NA12892.g.vcf.gz, work/gvcf/NA07357.g.vcf.gz, work/gvcf/NA12003.g.vcf.gz, work/gvcf/NA10851.g.vcf.gz, work/gvcf/NA12813.g.vcf.gz, work/gvcf/NA12873.g.vcf.gz, work/gvcf/NA12878.g.vcf.gz.tbi, work/gvcf/NA12891.g.vcf.gz.tbi, work/gvcf/NA12892.g.vcf.gz.tbi, work/gvcf/NA07357.g.vcf.gz.tbi, work/gvcf/NA12003.g.vcf.gz.tbi, work/gvcf/NA10851.g.vcf.gz.tbi, work/gvcf/NA12813.g.vcf.gz.tbi, work/gvcf/NA12873.g.vcf.gz.tbi, /courses/BINF6610.202710/data/refs/grch38-1000g/GRCh38_full_analysis_set_plus_decoy_hla.fa, /courses/BINF6610.202710/data/refs/grch38-1000g/GRCh38_full_analysis_set_plus_decoy_hla.fa.fai, /courses/BINF6610.202710/data/refs/grch38-1000g/GRCh38_full_analysis_set_plus_decoy_hla.dict
+    output: work/cohort/cohort.vcf.gz, work/cohort/cohort.vcf.gz.tbi
+    log: logs/joint_genotype.log
+    jobid: 2
+    reason: Missing output files: work/cohort/cohort.vcf.gz, work/cohort/cohort.vcf.gz.tbi; Code has changed since last execution
+    threads: 4
+    resources: tmpdir=<TBD>, disk_mb=6544, disk=6.54 GB, disk_mib=6241, mem_mb=24000, mem=24 GB, mem_mib=22889, slurm_account=binf6610.202710, slurm_partition=courses, runtime=120
+Shell command: 
+        (
+            DB_PARENT=$(mktemp -d /tmp/variant-call-XXXXXX)
+            DB_DIR="$DB_PARENT/genomicsdb"
+            trap 'rm -rf "$DB_PARENT"' EXIT
+
+            gatk GenomicsDBImport \
+                -V work/gvcf/NA12878.g.vcf.gz -V work/gvcf/NA12891.g.vcf.gz -V work/gvcf/NA12892.g.vcf.gz -V work/gvcf/NA07357.g.vcf.gz -V work/gvcf/NA12003.g.vcf.gz -V work/gvcf/NA10851.g.vcf.gz -V work/gvcf/NA12813.g.vcf.gz -V work/gvcf/NA12873.g.vcf.gz \
+                --genomicsdb-workspace-path "$DB_DIR" \
+                -L 'chr20:1-10000000'
+
+            gatk GenotypeGVCFs \
+                -R /courses/BINF6610.202710/data/refs/grch38-1000g/GRCh38_full_analysis_set_plus_decoy_hla.fa \
+                -V "gendb://$DB_DIR" \
+                -O work/cohort/cohort.vcf.gz \
+                -L 'chr20:1-10000000'
+        ) > logs/joint_genotype.log 2>&1
+        
+Job 2 has been submitted with SLURM jobid 11143504 (log: /home/han.meng1/BINF6610-pipeline/.snakemake/slurm_logs/rule_joint_genotype/11143504.log).
+[Fri Oct 16 16:00:34 2026]
+Finished jobid: 2 (Rule: joint_genotype)
+1 of 4 steps (25%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Fri Oct 16 16:00:34 2026]
+rule filter:
+    input: work/cohort/cohort.vcf.gz, work/cohort/cohort.vcf.gz.tbi, /courses/BINF6610.202710/data/refs/grch38-1000g/GRCh38_full_analysis_set_plus_decoy_hla.fa, /courses/BINF6610.202710/data/refs/grch38-1000g/GRCh38_full_analysis_set_plus_decoy_hla.fa.fai, /courses/BINF6610.202710/data/refs/grch38-1000g/GRCh38_full_analysis_set_plus_decoy_hla.dict
+    output: results-smk/cohort.filtered.vcf.gz, results-smk/cohort.filtered.vcf.gz.tbi, results-smk/variants.tsv
+    log: logs/filter.log
+    jobid: 1
+    reason: Missing output files: results-smk/cohort.filtered.vcf.gz.tbi, results-smk/variants.tsv, results-smk/cohort.filtered.vcf.gz; Input files updated by another job: work/cohort/cohort.vcf.gz.tbi, work/cohort/cohort.vcf.gz
+    threads: 2
+    resources: tmpdir=<TBD>, disk_mb=6235, disk=6.24 GB, disk_mib=5947, mem_mb=8000, mem=8 GB, mem_mib=7630, slurm_account=binf6610.202710, slurm_partition=courses, runtime=30
+Shell command: 
+        (
+            before_count=$(bcftools view -H work/cohort/cohort.vcf.gz | wc -l | tr -d ' ')
+
+            gatk VariantFiltration \
+                -R /courses/BINF6610.202710/data/refs/grch38-1000g/GRCh38_full_analysis_set_plus_decoy_hla.fa \
+                -V work/cohort/cohort.vcf.gz \
+                -O results-smk/cohort.filtered.vcf.gz \
+                --filter-expression "QD < 2.0" \
+                --filter-name "QD2" \
+                --filter-expression "QUAL < 30.0" \
+                --filter-name "QUAL30"
+
+            after_count=$(bcftools view -H results-smk/cohort.filtered.vcf.gz | wc -l | tr -d ' ')
+
+            if [[ "$before_count" != "$after_count" ]]; then
+                echo "VariantFiltration changed record count" >&2
+                exit 1
+            fi
+
+            printf 'chrom\tpos\tref\talt\tqual\tfilter\n' > results-smk/variants.tsv
+
+            bcftools query \
+                -f '%CHROM\t%POS\t%REF\t%ALT\t%QUAL\t%FILTER\n' \
+                results-smk/cohort.filtered.vcf.gz >> results-smk/variants.tsv
+        ) > logs/filter.log 2>&1
+        
+Job 1 has been submitted with SLURM jobid 11143793 (log: /home/han.meng1/BINF6610-pipeline/.snakemake/slurm_logs/rule_filter/11143793.log).
+[Fri Oct 16 16:01:14 2026]
+Finished jobid: 1 (Rule: filter)
+2 of 4 steps (50%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Fri Oct 16 16:01:14 2026]
+localrule publish:
+    input: work/validate/samplesheet.csv, results-smk/cohort.filtered.vcf.gz, results-smk/cohort.filtered.vcf.gz.tbi, results-smk/variants.tsv, results-smk/multiqc_report.html
+    output: results-smk/manifest.json, results-smk/samples.tsv
+    log: logs/publish.log
+    jobid: 45
+    reason: Missing output files: results-smk/samples.tsv, results-smk/manifest.json; Input files updated by another job: results-smk/cohort.filtered.vcf.gz.tbi, results-smk/variants.tsv, results-smk/cohort.filtered.vcf.gz
+    resources: tmpdir=/tmp, disk_mb=1000, disk=1 GB, disk_mib=954, mem_mb=2000, mem=2 GB, mem_mib=1908, slurm_account=binf6610.202710, slurm_partition=courses, runtime=30
+Shell command: 
+        printf 'sample_id\tcondition\n' > results-smk/samples.tsv
+        awk -F, 'NR == 1 { for (i = 1; i <= NF; i++) col[$i] = i; next }
+                 { print $col["sample_id"] "\t" $col["condition"] }' work/validate/samplesheet.csv >> results-smk/samples.tsv
+
+        # The manifest checksums copies of exactly what this run published.
+        rm -rf work/publish && mkdir -p work/publish/published
+        cp results-smk/cohort.filtered.vcf.gz results-smk/cohort.filtered.vcf.gz.tbi results-smk/variants.tsv results-smk/multiqc_report.html results-smk/samples.tsv work/publish/published/
+
+        NAME=variant-call VERSION=1.0.0 REVISION=none COMMIT=none RUN_NAME=snakemake-20261016T155220 STARTED_AT=2026-10-16T15:52:20.528069-04:00 LAUNCH_DIR=/home/han.meng1/BINF6610-pipeline ENGINE='snakemake 9.27.0' PLATFORM=singularity-hpc EXECUTOR=slurm PARAMS='platform=singularity-hpc executor=slurm samplesheet=/courses/BINF6610.202710/data/samplesheet-variant8.csv ref=/courses/BINF6610.202710/data/refs/grch38-1000g/GRCh38_full_analysis_set_plus_decoy_hla.fa region=chr20:1-10000000 outdir=results-smk' CONTAINERS='tools=community.wave.seqera.io/library/coreutils_gawk_gzip:7c58ccc2f9ca6bcc fastqc=quay.io/biocontainers/fastqc:0.12.1--hdfd78af_0 fastp=community.wave.seqera.io/library/fastp:1.3.7--075357a9d5c82494 bwa=community.wave.seqera.io/library/bwa_samtools:22527ddb3cc80fb3 gatk=community.wave.seqera.io/library/gatk4_samtools_bcftools:1adede7d418fb46b multiqc=quay.io/biocontainers/multiqc:1.35--pyhdfd78af_2' /home/han.meng1/BINF6610-pipeline/bin/run_manifest.sh work/publish/published work/validate/samplesheet.csv > results-smk/manifest.json 2> logs/publish.log
+        
+Activating singularity image /courses/BINF6610.202710/shared/snakemake-images/73238fbd483f441147d13443b775204c.simg
+[Fri Oct 16 16:01:16 2026]
+Finished jobid: 45 (Rule: publish)
+3 of 4 steps (75%) done
+Select jobs to execute...
+Execute 1 jobs...
+
+[Fri Oct 16 16:01:16 2026]
+localrule all:
+    input: results-smk/cohort.filtered.vcf.gz, results-smk/variants.tsv, results-smk/multiqc_report.html, results-smk/samples.tsv, results-smk/manifest.json
+    jobid: 0
+    reason: Input files updated by another job: results-smk/samples.tsv, results-smk/manifest.json, results-smk/variants.tsv, results-smk/cohort.filtered.vcf.gz
+    resources: tmpdir=/tmp, disk_mb=1000, disk=1 GB, disk_mib=954, mem_mb=2000, mem=2 GB, mem_mib=1908, slurm_account=binf6610.202710, slurm_partition=courses, runtime=30
+Shell command: None
+[Fri Oct 16 16:01:16 2026]
+Finished jobid: 0 (Rule: all)
+4 of 4 steps (100%) done
+Cleaning up SLURM log files older than 10 day(s).
+Complete log(s): /home/han.meng1/BINF6610-pipeline/.snakemake/log/2026-10-16T155219.411720.snakemake.log
+Elapsed time: 0:09:35.512534

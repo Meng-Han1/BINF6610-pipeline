@@ -260,3 +260,45 @@ this dataset. I restored the process time limit to `1h` and reran the
 workflow with `-resume`. The successful upstream work was reused, and the
 final Explorer head job `10882981` completed with exit code `0:0`. The
 completed workflow produced all eight samples and 36,853 VCF records.
+
+---
+
+# Week 5 — Snakemake deliberate failures
+
+
+## Failure 1 — Interrupt a smoke run and resume
+
+**Failure introduced:** I started a fresh laptop smoke run in an isolated copy of the Snakemake pipeline, then pressed Ctrl-C while `haplotypecaller (smoke_02)` was running.
+
+**Command:**
+snakemake --profile profiles/laptop \
+  --config samplesheet=$HOME/Desktop/BINF6610/smoke/samplesheet.csv \
+  ref=$HOME/Desktop/BINF6610/smoke/smoke.fa region=smoke_1mb
+**Evidence:** Nine of 21 steps had completed before interruption. Snakemake printed Terminating processes on user request, followed by an error for haplotypecaller. Running the same command again produced IncompleteFilesException, identifying work/gvcf/smoke_02.g.vcf.gz as incomplete and recommending --rerun-incomplete.
+**Fix and result:** I reran the pipeline with --rerun-incomplete. Snakemake reused completed outputs, regenerated the interrupted HaplotypeCaller output, and successfully executed the remaining 12 jobs (12 of 12 steps (100%) done). The earlier nine completed jobs were not rerun.
+
+## Failure 2 — Missing sample wildcard in BWA log
+
+**Failure introduced:** In a separate test Snakefile, I changed the bwa_mem rule's log from logs/bwa_mem/{sample}.log to logs/bwa_mem.log, leaving the per-sample output unchanged.
+**Command:** snakemake -s Snakefile-failure2 --profile profiles/laptop -n with the smoke samplesheet, reference and region supplied through --config.
+**Evidence:** Snakemake raised RuleException during workflow parsing:
+Not all output, log and benchmark files of rule bwa_mem contain the same wildcards. This is crucial though, in order to avoid that two or more jobs write to the same file.
+**Fix:** Restore logs/bwa_mem/{sample}.log. Every per-sample BWA job then has its own log file, preventing different samples from writing to the same log.
+
+## Failure 3 — Ambiguous fastp rules
+
+**Failure introduced:** In a separate test Snakefile, I removed wildcard_constraints from both fastp_paired and fastp_single.
+**Command:** snakemake -s Snakefile-failure3 --profile profiles/laptop -n work/trim/smoke_01_R1.trim.fastq.gz with the smoke configuration.
+**Evidence:** Snakemake raised AmbiguousRuleException:
+Rules fastp_paired and fastp_single are ambiguous for the file work/trim/smoke_01_R1.trim.fastq.gz.
+Both rules matched sample=smoke_01 and claimed the same R1 trimmed FASTQ output.
+**Fix:** Restore wildcard_constraints using the paired-end and single-end sample sets. This ensures that each sample's trimmed output is produced by exactly one fastp rule.
+
+## Failure 4 — Disable Apptainer on Explorer
+
+**Failure introduced:** I temporarily removed software-deployment-method: apptainer from profiles/explorer/profile.yaml before submitting the Explorer Snakemake head job 11136980.
+**Evidence:** The head job failed after submitting Slurm tasks. FASTQC job 11137002 and fastp job 11137013 failed. Their rule logs reported:
+/usr/bin/bash: line 1: fastqc: command not found
+/usr/bin/bash: line 1: fastp: command not found
+The jobs had failed exit status 1:0 in Slurm accounting. Without Apptainer, the compute-node jobs attempted to execute tools that were not available on their PATH.
+**Fix and result:** I restored software-deployment-method: apptainer and resubmitted the workflow. The validation step was reused rather than rerun. A later GenomicsDBImport timeout required moving its temporary workspace from shared NFS to node-local /tmp. The final head job 11143472 completed successfully with exit code 0:0.
