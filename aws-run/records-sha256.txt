@@ -1,0 +1,4 @@
+local 342f453e1145eeb7cbaa6feb26ab647a93517912c3209e3870421883e4735dae
+aws 342f453e1145eeb7cbaa6feb26ab647a93517912c3209e3870421883e4735dae
+
+The local Docker and AWS Batch runs produced identical variant records across all three smoke samples (2,965 records).

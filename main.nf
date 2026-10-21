@@ -30,9 +30,7 @@ workflow {
      */
     ref = file(params.ref)
     ref_fai = file("${params.ref}.fai")
-    ref_dict = file(
-        params.ref.replaceFirst(/\.[^\.]+$/, '') + '.dict'
-    )
+    ref_dict = ref.resolveSibling("${ref.baseName}.dict")
     ref_index = files("${params.ref}.{amb,ann,bwt,pac,sa}")
 
     /*

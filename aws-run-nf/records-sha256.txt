@@ -1,0 +1,4 @@
+part-a 342f453e1145eeb7cbaa6feb26ab647a93517912c3209e3870421883e4735dae
+part-b 342f453e1145eeb7cbaa6feb26ab647a93517912c3209e3870421883e4735dae
+
+The AWS Batch single-job run and the Nextflow AWS Batch run produced identical variant records across all three smoke samples (2,965 records).
