@@ -37,3 +37,5 @@ for stage in "${STAGES[@]}"; do
         exit 0
     fi
 done
+
+if [ "$CI_DEMO" = "test" ]; then
