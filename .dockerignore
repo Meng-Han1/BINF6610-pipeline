@@ -12,3 +12,9 @@ results-*
 TROUBLESHOOTING-week5-before-format.md
 *.sif
 *.simg
+
+# Week 8 CD: exclude CI and release artifacts
+tests
+.github
+ci-out
+cd-run*
