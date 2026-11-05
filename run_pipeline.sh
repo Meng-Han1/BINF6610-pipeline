@@ -37,3 +37,5 @@ for stage in "${STAGES[@]}"; do
         exit 0
     fi
 done
+
+# CI verifies this script before changes are merged into main.
