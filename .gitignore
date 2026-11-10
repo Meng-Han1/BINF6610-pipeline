@@ -24,3 +24,10 @@ nf-head-*.out
 .snakemake/
 logs/
 slurm/*.out
+
+# Week 9 SQLite database
+*.db
+
+# Python bytecode and cache
+__pycache__/
+*.pyc
